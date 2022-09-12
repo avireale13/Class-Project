@@ -25,7 +25,9 @@
 set -e;
 
 PREFIX=$HOME/macports
-port -fp uninstall installed || true
+if [ command -v port &> /dev/null ]; then
+    port -fp uninstall installed || true
+fi
 rm -rf \
     $PREFIX \
     $HOME/Applications/DarwinPorts \

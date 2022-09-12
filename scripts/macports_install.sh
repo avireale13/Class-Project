@@ -26,13 +26,17 @@ set -e;
 
 PREFIX=$HOME/macports
 
+INSTALLDIR=$HOME
+
+pushd "${INSTALLDIR}"
+
 if [ ! -d "MacPorts-2.7.2" ]
 then
     curl -L https://github.com/macports/macports-base/releases/download/v2.7.2/MacPorts-2.7.2.tar.bz2 > MacPorts-2.7.2.tar.bz2
     tar xjvf MacPorts-2.7.2.tar.bz2
 fi
 
-cd MacPorts-2.7.2
+pushd MacPorts-2.7.2
 
 # NOTE: Both patches can be removed on next release of MacPorts
 # Currently required to get cmake-bootstrap to build:
@@ -51,6 +55,7 @@ fi
 ./configure --prefix=$PREFIX \
   --with-no-root-privileges \
   --with-install-user=$USER \
+  --with-applications-dir=${PREFIX}/Applications \
   --without-startupitems
 make
 make install
@@ -72,5 +77,7 @@ export SDKROOT=/Library/Developer/CommandLineTools/SDKs/MacOSX11.3.sdk
 
 port -v selfupdate
 
-cd ..
+popd # MacPorts-2.7.2
 # rm -rf MacPorts-2.7.2*
+
+popd # INSTALLDIR
