@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 #####################################################################
- # macports_install.sh: installs macports                           #
+ # macports_uninstall.sh: installs macports                         #
  #                                                                  #
  # Copyright 2022 Lukas Oberhuber <lukaso@gmail.com>                #
  #                                                                  #
@@ -24,25 +24,48 @@
 
 set -e;
 
-if [ ! command -v port &> /dev/null ]; then
-  echo "**install MacPorts"
+PREFIX=$HOME/macports
 
-  PREFIX=$HOME/macports
-  mkdir -p $PREFIX
-  pushd $PREFIX
-  curl -L -O https://github.com/macports/macports-base/releases/download/v2.7.2/MacPorts-2.7.2-12-Monterey.pkg
-  sudo installer -pkg MacPorts-2.7.2-12-Monterey.pkg -target /
-  popd
+INSTALLDIR=$HOME
 
-  echo 'buildfromsource always' | sudo tee -a /opt/local/etc/macports/macports.conf
-  echo 'macosx_deployment_target 11.0' | sudo tee -a /opt/local/etc/macports/macports.conf
-  echo '-x11 +no_x11 +quartz -python27 +no_gnome -gnome -gfortran' | sudo tee -a /opt/local/etc/macports/variants.conf
+pushd "${INSTALLDIR}"
 
-  rm -rf $PREFIX
+if [ ! -d "MacPorts-2.7.2" ]
+then
+    curl -L https://github.com/macports/macports-base/releases/download/v2.7.2/MacPorts-2.7.2.tar.bz2 > MacPorts-2.7.2.tar.bz2
+    tar xjvf MacPorts-2.7.2.tar.bz2
 fi
 
-echo "*** Setup 11.3 SDK"
+pushd MacPorts-2.7.2
+
+# NOTE: Both patches can be removed on next release of MacPorts
+# Currently required to get cmake-bootstrap to build:
+# https://trac.macports.org/ticket/65313
+if [ ! -f "macports.patch" ]
+then
+  curl -L https://github.com/macports/macports-base/commit/fbfcb9ff67ae55f477652fe6b7e7fc809782dbbf.patch > macports.patch
+  patch -p1 < macports.patch
+fi
+if [ ! -f "macports2.patch" ]
+then
+  curl -L https://github.com/macports/macports-base/commit/a594e01e3cfffe66c2d7219e10ebe0bb1a6da4ea.patch > macports2.patch
+  patch -p1 < macports2.patch
+fi
+
+./configure --prefix=$PREFIX \
+  --with-no-root-privileges \
+  --with-install-user=$USER \
+  --with-applications-dir=${PREFIX}/Applications \
+  --without-startupitems
+make
+make install
+# env vars will not set in the parent shell
+export PATH=$PREFIX/bin:$PATH
+echo '-x11 +no_x11 +quartz -python27' >> $PREFIX/etc/macports/variants.conf
+echo 'macosx_deployment_target 11.0' >> $PREFIX/etc/macports/macports.conf
 export MACOSX_DEPLOYMENT_TARGET=11.0
+
+echo "*** Setup 11.3 SDK"
 
 pushd /Library/Developer/CommandLineTools/SDKs
 if [ ! -d "MacOSX11.3.sdk" ]
@@ -52,5 +75,9 @@ fi
 popd
 export SDKROOT=/Library/Developer/CommandLineTools/SDKs/MacOSX11.3.sdk
 
-sudo port -v selfupdate
+port -v selfupdate
 
+popd # MacPorts-2.7.2
+# rm -rf MacPorts-2.7.2*
+
+popd # INSTALLDIR
