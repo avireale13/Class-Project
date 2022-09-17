@@ -24,21 +24,26 @@
 
 set -e;
 
+PROJECT_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )/.." && pwd )"
+PREFIX=/opt/local
+
 if [ ! command -v port &> /dev/null ]; then
   echo "**install MacPorts"
 
-  PREFIX=$HOME/macports
-  mkdir -p $PREFIX
-  pushd $PREFIX
+  MACPORTS_INSTALLER=$HOME/macports
+  mkdir -p $MACPORTS_INSTALLER
+  pushd $MACPORTS_INSTALLER
   curl -L -O https://github.com/macports/macports-base/releases/download/v2.7.2/MacPorts-2.7.2-12-Monterey.pkg
   sudo installer -pkg MacPorts-2.7.2-12-Monterey.pkg -target /
   popd
 
-  echo 'buildfromsource always' | sudo tee -a /opt/local/etc/macports/macports.conf
-  echo 'macosx_deployment_target 11.0' | sudo tee -a /opt/local/etc/macports/macports.conf
-  echo '-x11 +no_x11 +quartz -python27 +no_gnome -gnome -gfortran' | sudo tee -a /opt/local/etc/macports/variants.conf
+  echo 'buildfromsource always' | sudo tee -a ${PREFIX}/etc/macports/macports.conf
+  echo 'macosx_deployment_target 11.0' | sudo tee -a ${PREFIX}/etc/macports/macports.conf
+  echo '-x11 +no_x11 +quartz -python27 +no_gnome -gnome -gfortran' | sudo tee -a ${PREFIX}/etc/macports/variants.conf
+  echo -e "Famous Quotes\n$(cat input)" > input
+  printf "file://${PROJECT_DIR}/ports\n$(cat ${PREFIX}/etc/macports/sources.conf)" > ${PREFIX}/etc/macports/sources.conf
 
-  rm -rf $PREFIX
+  rm -rf $MACPORTS_INSTALLER
 fi
 
 echo "*** Setup 11.3 SDK"

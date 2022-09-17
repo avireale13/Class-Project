@@ -29,10 +29,21 @@ sudo port -N install openjpeg ilmbase json-c libde265 nasm x265
 sudo port -N install util-linux xmlto py-cairo py-gobject3
 sudo port -N install gtk-osx-application-gtk3 # should have python included. Let's see if it matters
 sudo port -N install libarchive libyaml
-sudo port -N install lcms2 glib-networking poppler poppler-data fontconfig libmypaint mypaint-brushes libheif \
-  aalib webp shared-mime-info iso-codes librsvg-devel gexiv2 libwmf openexr libmng ghostscript
-# left out webkit dependencies
-sudo port -N install babl gegl
+sudo port -N install lcms2 glib-networking poppler poppler-data fontconfig libmypaint mypaint-brushes1 libheif \
+  aalib webp shared-mime-info iso-codes librsvg gexiv2 libwmf openexr libmng ghostscript
+# dbus not properly listed as dependency for gjs
+sudo port -N install dbus gjs
 
-# port -N install SuiteSparse_AMD SuiteSparse_CAMD SuiteSparse_CCOLAMD SuiteSparse_COLAMD SuiteSparse_CHOLMOD \
-  # SuiteSparse_UMFPACK metis
+sudo port -N install babl
+
+sudo sed -i -e 's/buildfromsource always/buildfromsource never/g' /opt/local/etc/macports/macports.conf
+sudo port -N install libgcc12
+sudo sed -i -e 's/buildfromsource never/buildfromsource always/g' /opt/local/etc/macports/macports.conf
+
+sudo port -N install gegl
+
+pushd ~/project/ports
+portindex
+popd
+
+sudo port -N install gimp3
