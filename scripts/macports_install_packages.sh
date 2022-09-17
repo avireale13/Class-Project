@@ -33,6 +33,7 @@ sudo port -N install lcms2 glib-networking poppler poppler-data fontconfig libmy
   aalib webp shared-mime-info iso-codes librsvg gexiv2 libwmf openexr libmng ghostscript
 # dbus not properly listed as dependency for gjs
 sudo port -N install dbus gjs
+sudo port -N install adwaita-icon-theme
 
 sudo port -N install babl
 

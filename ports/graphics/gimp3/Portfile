@@ -84,11 +84,12 @@ depends_lib-append \
                     port:libmng \
                     port:ghostscript \
                     port:gegl \
-                    port:gjs
+                    port:gjs \
+                    port:adwaita-icon-theme \
+                    port:hicolor-icon-theme
 
-# proposed fix for 32 bit builds
-# https://trac.macports.org/ticket/58524
-# patchfiles-append   patch-gegl-32bit-host-statistics.diff
+patchfiles-append   pythonpath.patch
+patch.pre_args      -p1
 
 # post-patch {
 #     # https://trac.macports.org/ticket/35148
@@ -100,10 +101,6 @@ depends_lib-append \
 # needs C++14 C11
 compiler.cxx_standard 2014
 compiler.c_standard   2011
-
-# version 0.4.14+ requires apple clang 700.0.72 (Xcode 7.0.0) to build new parallelization code
-# ../gegl/gegl-parallel.h:134:29: error: expected expression '[] (gint     i,'
-compiler.blacklist-append  {clang < 900}
 
 set python_framework        ${frameworks_dir}/Python.framework/Versions/3.10
 configure.pkg_config_path   ${python_framework}/lib/pkgconfig
@@ -119,6 +116,10 @@ configure.args-append       -Dbuild-id=org.gimp.GIMP_official \
 platform darwin powerpc {
     depends_lib-delete path:lib/libluajit-5.1.2.dylib:luajit
     configure.args-append -Dlua=false
+}
+
+variant debug description {Build with debug symbols} {
+    configure.optflags-append -g
 }
 
 # TODO

@@ -24,4 +24,4 @@
 
 set -e;
 
-sudo port -N install gimp3
+sudo port -k -N install gimp3 +debug
