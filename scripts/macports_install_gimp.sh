@@ -24,4 +24,12 @@
 
 set -e;
 
+PROJECT_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )/.." && pwd )"
+PREFIX=/opt/local
+export PATH=$PREFIX/bin:$PATH
+
+pushd ~/project/ports
+portindex
+popd
+
 sudo port -k -N install gimp3 +debug

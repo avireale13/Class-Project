@@ -24,6 +24,10 @@
 
 set -e;
 
+PROJECT_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )/.." && pwd )"
+PREFIX=/opt/local
+export PATH=$PREFIX/bin:$PATH
+
 port -N install icu
 port -N install lcms2 libunistring gmp nettle libtasn1 gnutls jpeg readline python2 glib-networking openjpeg  gtk-mac-integration-gtk2 poppler poppler-data
 port -N install json-glib p2tc exiv2 gexiv2 ilmbase openexr libwebp libcroco librsvg-24 json-c

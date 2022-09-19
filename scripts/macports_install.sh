@@ -26,6 +26,7 @@ set -e;
 
 PROJECT_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )/.." && pwd )"
 PREFIX=/opt/local
+export PATH=$PREFIX/bin:$PATH
 
 if [ ! command -v port &> /dev/null ]; then
   echo "**install MacPorts"
@@ -46,16 +47,16 @@ if [ ! command -v port &> /dev/null ]; then
   rm -rf $MACPORTS_INSTALLER
 fi
 
-echo "*** Setup 11.3 SDK"
-export MACOSX_DEPLOYMENT_TARGET=11.0
+# echo "*** Setup 11.3 SDK"
+# export MACOSX_DEPLOYMENT_TARGET=11.0
 
-pushd /Library/Developer/CommandLineTools/SDKs
-if [ ! -d "MacOSX11.3.sdk" ]
-then
-    sudo curl -L 'https://github.com/phracker/MacOSX-SDKs/releases/download/11.3/MacOSX11.3.sdk.tar.xz' | sudo tar -xzf -
-fi
-popd
-export SDKROOT=/Library/Developer/CommandLineTools/SDKs/MacOSX11.3.sdk
+# pushd /Library/Developer/CommandLineTools/SDKs
+# if [ ! -d "MacOSX11.3.sdk" ]
+# then
+#     sudo curl -L 'https://github.com/phracker/MacOSX-SDKs/releases/download/11.3/MacOSX11.3.sdk.tar.xz' | sudo tar -xzf -
+# fi
+# popd
+# export SDKROOT=/Library/Developer/CommandLineTools/SDKs/MacOSX11.3.sdk
 
 sudo port -v selfupdate
 

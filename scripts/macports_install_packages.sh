@@ -24,6 +24,10 @@
 
 set -e;
 
+PROJECT_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )/.." && pwd )"
+PREFIX=/opt/local
+export PATH=$PREFIX/bin:$PATH
+
 sudo port -N install icu
 sudo port -N install openjpeg ilmbase json-c libde265 nasm x265
 sudo port -N install util-linux xmlto py-cairo py-gobject3
@@ -43,8 +47,3 @@ sudo sed -i -e 's/buildfromsource never/buildfromsource always/g' /opt/local/etc
 
 sudo port -N install gegl +vala
 
-pushd ~/project/ports
-portindex
-popd
-
-sudo port -N install gimp3
