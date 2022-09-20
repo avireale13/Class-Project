@@ -28,13 +28,24 @@ PROJECT_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )/.." && pwd )"
 PREFIX=/opt/local
 export PATH=$PREFIX/bin:$PATH
 
-port -N install icu
-port -N install lcms2 libunistring gmp nettle libtasn1 gnutls jpeg readline python2 glib-networking openjpeg  gtk-mac-integration-gtk2 poppler poppler-data
-port -N install json-glib p2tc exiv2 gexiv2 ilmbase openexr libwebp libcroco librsvg-24 json-c
-port -N install libmypaint mypaint-brushes libde265 nasm x265 libheif aalib shared-mime-info iso-codes libwmf libmng ghostscript
-port -N install pycairo pygobject pygtk gtk-mac-integration-gtk2-python
-port -N install enchant libpsl sqlite vala gnutls
-port -N install SuiteSparse_AMD SuiteSparse_CAMD SuiteSparse_CCOLAMD SuiteSparse_COLAMD SuiteSparse_CHOLMOD \
-  SuiteSparse_UMFPACK metis
-port -N install libsoup
-port -N install babl gegl
+export MACOSX_DEPLOYMENT_TARGET=11.0
+
+sudo port -N install icu
+sudo port -N install openjpeg ilmbase json-c libde265 nasm x265
+sudo port -N install util-linux xmlto py-cairo py-gobject3
+sudo port -N install gtk-osx-application-gtk3 # should have python included. Let's see if it matters
+sudo port -N install libarchive libyaml
+sudo port -N install lcms2 glib-networking poppler poppler-data fontconfig libmypaint mypaint-brushes1 libheif \
+  aalib webp shared-mime-info iso-codes librsvg gexiv2 libwmf openexr libmng ghostscript
+# dbus not properly listed as dependency for gjs
+sudo port -N install dbus gjs
+sudo port -N install adwaita-icon-theme
+
+sudo port -N install babl
+
+sudo sed -i -e 's/buildfromsource always/buildfromsource never/g' /opt/local/etc/macports/macports.conf
+sudo port -N install libgcc12
+sudo sed -i -e 's/buildfromsource never/buildfromsource always/g' /opt/local/etc/macports/macports.conf
+
+sudo port -N install gegl +vala
+

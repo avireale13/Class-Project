@@ -40,6 +40,7 @@ if [ ! command -v port &> /dev/null ]; then
 
   echo 'buildfromsource always' | sudo tee -a ${PREFIX}/etc/macports/macports.conf
   echo 'macosx_deployment_target 11.0' | sudo tee -a ${PREFIX}/etc/macports/macports.conf
+  echo 'macosx_sdk_version 11.3' | sudo tee -a ${PREFIX}/etc/macports/macports.conf
   echo '-x11 +no_x11 +quartz -python27 +no_gnome -gnome -gfortran' | sudo tee -a ${PREFIX}/etc/macports/variants.conf
   echo -e "Famous Quotes\n$(cat input)" > input
   printf "file://${PROJECT_DIR}/ports\n$(cat ${PREFIX}/etc/macports/sources.conf)" > ${PREFIX}/etc/macports/sources.conf
@@ -47,16 +48,16 @@ if [ ! command -v port &> /dev/null ]; then
   rm -rf $MACPORTS_INSTALLER
 fi
 
-# echo "*** Setup 11.3 SDK"
-# export MACOSX_DEPLOYMENT_TARGET=11.0
+echo "*** Setup 11.3 SDK"
+export MACOSX_DEPLOYMENT_TARGET=11.0
 
-# pushd /Library/Developer/CommandLineTools/SDKs
-# if [ ! -d "MacOSX11.3.sdk" ]
-# then
-#     sudo curl -L 'https://github.com/phracker/MacOSX-SDKs/releases/download/11.3/MacOSX11.3.sdk.tar.xz' | sudo tar -xzf -
-# fi
-# popd
-# export SDKROOT=/Library/Developer/CommandLineTools/SDKs/MacOSX11.3.sdk
+pushd /Library/Developer/CommandLineTools/SDKs
+if [ ! -d "MacOSX11.3.sdk" ]
+then
+    sudo curl -L 'https://github.com/phracker/MacOSX-SDKs/releases/download/11.3/MacOSX11.3.sdk.tar.xz' | sudo tar -xzf -
+fi
+popd
+export SDKROOT=/Library/Developer/CommandLineTools/SDKs/MacOSX11.3.sdk
 
 sudo port -v selfupdate
 
