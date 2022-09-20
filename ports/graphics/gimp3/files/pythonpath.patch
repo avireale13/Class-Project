@@ -26,7 +26,7 @@ index 6f5a504344..7875983295 100644
  python3_minver = '>=3.6'
 
 -python = pythonmod.find_installation('python3')
-+python = pythonmod.find_installation('/opt/local/bin/python3.10')
++python = pythonmod.find_installation('@@PYTHON3_BIN@@')
  message('Found Python @0@'.format(python.language_version()))
 
  have_python = get_option('python')

@@ -55,7 +55,6 @@ depends_lib-append \
                     path:lib/pkgconfig/poppler.pc:poppler \
                     port:webp \
                     port:icu \
-                    port:python310 \
                     port:openjpeg \
                     port:ilmbase \
                     port:json-c \
@@ -90,12 +89,20 @@ depends_lib-append \
 patchfiles-append   pythonpath.patch
 patch.pre_args      -p1
 
-# post-patch {
-#     # https://trac.macports.org/ticket/35148
-#     if {${os.major} < 10} {
-#         reinplace "s|OpenGL/CGLDevice.h|OpenGL/CGLTypes.h|" ${worksrcpath}/gegl/opencl/cl_gl.h
-#     }
-# }
+# Set preferred python version
+set py_ver          3.10
+set py_ver_nodot    [string map {. {}} ${py_ver}]
+
+depends_build-append \
+                    port:python${py_ver_nodot}
+
+configure.python    ${prefix}/bin/python${py_ver}
+
+post-patch {
+    reinplace -W ${worksrcpath} \
+        "s|@@PYTHON3_BIN@@|${configure.python}|" \
+        meson.build
+}
 
 # needs C++14 C11
 compiler.cxx_standard 2014
