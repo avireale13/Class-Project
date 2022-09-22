@@ -24,6 +24,18 @@
 
 set -e;
 
+if [ "$1" == "circleci" ]; then
+  circleci=true
+fi
+
+function sup_port() {
+	if [ $circleci ]; then
+    "$@" | cat
+  else
+    "$@"
+  fi
+}
+
 PROJECT_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )/.." && pwd )"
 PREFIX=/opt/local
 export PATH=$PREFIX/bin:$PATH
@@ -34,4 +46,4 @@ pushd ~/project/ports
 portindex
 popd
 
-sudo port -k -N install gimp3 +debug
+sup_port sudo port -k -N install gimp3 +debug

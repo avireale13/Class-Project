@@ -24,31 +24,42 @@
 
 set -e;
 
+if [ "$1" == "circleci" ]; then
+  circleci=true
+fi
+
+function sup_port() {
+	if [ $circleci ]; then
+    "$@" | cat
+  else
+    "$@"
+  fi
+}
+
 PROJECT_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )/.." && pwd )"
 PREFIX=/opt/local
 export PATH=$PREFIX/bin:$PATH
 
 source ~/.profile
 
-sudo port -N install python310
-sudo port select --set python python310
-sudo port select --set python3 python310
-sudo port -N install icu
-sudo port -N install openjpeg ilmbase json-c libde265 nasm x265
-sudo port -N install util-linux xmlto py-cairo py-gobject3
-sudo port -N install gtk-osx-application-gtk3
-sudo port -N install libarchive libyaml
-sudo port -N install lcms2 glib-networking poppler poppler-data fontconfig libmypaint mypaint-brushes1 libheif \
+sup_port sudo port -N install python310
+sup_port sudo port select --set python python310
+sup_port sudo port select --set python3 python310
+sup_port sudo port -N install icu
+sup_port sudo port -N install openjpeg ilmbase json-c libde265 nasm x265
+sup_port sudo port -N install util-linux xmlto py-cairo py-gobject3
+sup_port sudo port -N install gtk-osx-application-gtk3
+sup_port sudo port -N install libarchive libyaml
+sup_port sudo port -N install lcms2 glib-networking poppler poppler-data fontconfig libmypaint mypaint-brushes1 libheif \
   aalib webp shared-mime-info iso-codes librsvg gexiv2 libwmf openexr libmng ghostscript
-sudo port -N install gjs
-sudo port -N install adwaita-icon-theme
+sup_port sudo port -N install gjs
+sup_port sudo port -N install adwaita-icon-theme
 
-sudo port -N install babl
+sup_port sudo port -N install babl
 
 echo "gcc12 being installed before gegl"
 sudo sed -i -e 's/buildfromsource always/buildfromsource never/g' /opt/local/etc/macports/macports.conf
-sudo port -N install gcc12
+sup_port sudo port -N install gcc12
 sudo sed -i -e 's/buildfromsource never/buildfromsource always/g' /opt/local/etc/macports/macports.conf
 
-sudo port -N install gegl +vala
-
+sup_port sudo port -N install gegl +vala

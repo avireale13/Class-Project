@@ -73,7 +73,7 @@ jobs:
         - run:
             name: Build GIMP dependencies part 1 (without gegl/babl)
             command: |
-              scripts/macports1_install_packages.sh
+              scripts/macports1_install_packages.sh circleci
         - save_cache:
             paths:
               - /opt/local
@@ -93,7 +93,7 @@ jobs:
             # XXX `make check` is not working reliably under circle ci, so we are
             # not using --check flag
             command: |
-              scripts/macports2_install_gimp.sh
+              scripts/macports2_install_gimp.sh circleci
         - save_cache:
             paths:
               - /opt/local
