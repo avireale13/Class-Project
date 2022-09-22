@@ -36,7 +36,7 @@ else
   echo "*** Build: x86_64"
 fi
 
-if [ ! command -v port &> /dev/null ]; then
+if [ ! $(command -v port &> /dev/null) ]; then
   echo "**install MacPorts"
 
   MACPORTS_INSTALLER=$HOME/macports
@@ -55,7 +55,7 @@ if [ ! command -v port &> /dev/null ]; then
     echo 'macosx_sdk_version 10.12' | sudo tee -a ${PREFIX}/etc/macports/macports.conf
   fi
   echo '-x11 +no_x11 +quartz -python27 +no_gnome -gnome -gfortran' | sudo tee -a ${PREFIX}/etc/macports/variants.conf
-  printf "file://${PROJECT_DIR}/ports\n$(cat ${PREFIX}/etc/macports/sources.conf)" > ${PREFIX}/etc/macports/sources.conf
+  printf "file://${PROJECT_DIR}/ports\n$(cat ${PREFIX}/etc/macports/sources.conf)" | sudo tee ${PREFIX}/etc/macports/sources.conf
 
   rm -rf $MACPORTS_INSTALLER
 fi
@@ -81,7 +81,6 @@ else
     echo 'export MACOSX_DEPLOYMENT_TARGET=10.12' >> ~/.profile
 fi
 
-echo "*** Setup 11.3 SDK"
 source ~/.profile
 
 sudo port -v selfupdate
