@@ -24,6 +24,8 @@
 
 set -e;
 
+source ~/.profile
+
 if [[ $(uname -m) == 'arm64' ]]; then
   build_arm64=true
   echo "*** Build: arm64"

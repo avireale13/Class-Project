@@ -28,23 +28,26 @@ PROJECT_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )/.." && pwd )"
 PREFIX=/opt/local
 export PATH=$PREFIX/bin:$PATH
 
-export MACOSX_DEPLOYMENT_TARGET=11.0
+source ~/.profile
 
+sudo port -N install python310
+sudo port select --set python python310
+sudo port select --set python3 python310
 sudo port -N install icu
 sudo port -N install openjpeg ilmbase json-c libde265 nasm x265
 sudo port -N install util-linux xmlto py-cairo py-gobject3
-sudo port -N install gtk-osx-application-gtk3 # should have python included. Let's see if it matters
+sudo port -N install gtk-osx-application-gtk3
 sudo port -N install libarchive libyaml
 sudo port -N install lcms2 glib-networking poppler poppler-data fontconfig libmypaint mypaint-brushes1 libheif \
   aalib webp shared-mime-info iso-codes librsvg gexiv2 libwmf openexr libmng ghostscript
-# dbus not properly listed as dependency for gjs
-sudo port -N install dbus gjs
+sudo port -N install gjs
 sudo port -N install adwaita-icon-theme
 
 sudo port -N install babl
 
+echo "gcc12 being installed before gegl"
 sudo sed -i -e 's/buildfromsource always/buildfromsource never/g' /opt/local/etc/macports/macports.conf
-sudo port -N install libgcc12
+sudo port -N install gcc12
 sudo sed -i -e 's/buildfromsource never/buildfromsource always/g' /opt/local/etc/macports/macports.conf
 
 sudo port -N install gegl +vala

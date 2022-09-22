@@ -28,7 +28,7 @@ PROJECT_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )/.." && pwd )"
 PREFIX=/opt/local
 export PATH=$PREFIX/bin:$PATH
 
-export MACOSX_DEPLOYMENT_TARGET=11.0
+source ~/.profile
 
 pushd ~/project/ports
 portindex
