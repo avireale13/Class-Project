@@ -13,13 +13,9 @@ commands:
             name: Avoid hosts unknown for gitlab.gnome.org
             command: mkdir -p ~/.ssh/ && echo -e "Host gitlab.gnome.org\n\tStrictHostKeyChecking no\n" > ~/.ssh/config
         - run:
-            name: Setup 10.12 SDK
+            name: Install macports
             command: |
-              cd /Library/Developer/CommandLineTools/SDKs
-              sudo curl -L 'https://github.com/phracker/MacOSX-SDKs/releases/download/10.15/MacOSX10.12.sdk.tar.xz' | sudo tar -xzf -
-              echo 'export SDKROOT=/Library/Developer/CommandLineTools/SDKs/MacOSX10.12.sdk' > ~/.profile
-              echo 'export MACOSX_DEPLOYMENT_TARGET=10.12' >> ~/.profile
-              echo 'export PYENV_PYTHON_VERSION=3.10.5' >> ~/.profile
+              script/macports0_install.sh
         # - run:
         #     name: Gimp version (default `master`)
         #     command: |
@@ -49,10 +45,8 @@ commands:
             keys:
               - v{{ checksum "CACHE_BREAK" }}-gimpv3-{{ checksum "CACHE_ITER" }}
               - v{{ checksum "CACHE_BREAK" }}-gimp-depspt1v3-{{ checksum "CACHE_ITER" }}
-              - v{{ checksum "CACHE_BREAK" }}-bootstrapv3-{{ checksum "CACHE_ITER" }}
               - v{{ checksum "CACHE_BREAK" }}-gimpv3-
               - v{{ checksum "CACHE_BREAK" }}-gimp-depspt1v3-
-              - v{{ checksum "CACHE_BREAK" }}-bootstrapv3-
 
 # -------------------------
 #        JOBS
@@ -67,23 +61,6 @@ jobs:
     steps:
         - setup
         - build-env
-
-  build-and-package:
-    macos:
-        xcode: "13.3.0"
-        resource_class: macos.x86.medium.gen2
-
-    steps:
-        - setup
-        - get-cached-data
-        - run:
-            name: Macports install
-            command: |
-              scripts/macports0_install.sh
-        - save_cache:
-            paths:
-              - /opt/local
-            key: v{{ checksum "CACHE_BREAK" }}-bootstrapv3-{{ checksum "CACHE_ITER" }}
 
   dependencies-part1:
     macos:
@@ -164,10 +141,7 @@ workflows:
   version: 2
   build-different-versions:
     jobs:
-      - bootstrap
-      - dependencies-part1:
-          requires:
-            - bootstrap
+      - dependencies-part1
       - build-gimp-and-package:
           requires:
             - dependencies-part1

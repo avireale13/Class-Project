@@ -28,6 +28,14 @@ PROJECT_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )/.." && pwd )"
 PREFIX=/opt/local
 export PATH=$PREFIX/bin:$PATH
 
+if [[ $(uname -m) == 'arm64' ]]; then
+  build_arm64=true
+  echo "*** Build: arm64"
+else
+  build_arm64=false
+  echo "*** Build: x86_64"
+fi
+
 if [ ! command -v port &> /dev/null ]; then
   echo "**install MacPorts"
 
@@ -39,25 +47,42 @@ if [ ! command -v port &> /dev/null ]; then
   popd
 
   echo 'buildfromsource always' | sudo tee -a ${PREFIX}/etc/macports/macports.conf
-  echo 'macosx_deployment_target 11.0' | sudo tee -a ${PREFIX}/etc/macports/macports.conf
-  echo 'macosx_sdk_version 11.3' | sudo tee -a ${PREFIX}/etc/macports/macports.conf
+  if [ "$build_arm64" = true ] ; then
+    echo 'macosx_deployment_target 11.0' | sudo tee -a ${PREFIX}/etc/macports/macports.conf
+    echo 'macosx_sdk_version 11.3' | sudo tee -a ${PREFIX}/etc/macports/macports.conf
+  else
+    echo 'macosx_deployment_target 10.12' | sudo tee -a ${PREFIX}/etc/macports/macports.conf
+    echo 'macosx_sdk_version 10.12' | sudo tee -a ${PREFIX}/etc/macports/macports.conf
+  fi
   echo '-x11 +no_x11 +quartz -python27 +no_gnome -gnome -gfortran' | sudo tee -a ${PREFIX}/etc/macports/variants.conf
-  echo -e "Famous Quotes\n$(cat input)" > input
   printf "file://${PROJECT_DIR}/ports\n$(cat ${PREFIX}/etc/macports/sources.conf)" > ${PREFIX}/etc/macports/sources.conf
 
   rm -rf $MACPORTS_INSTALLER
 fi
 
-echo "*** Setup 11.3 SDK"
-export MACOSX_DEPLOYMENT_TARGET=11.0
-
-pushd /Library/Developer/CommandLineTools/SDKs
-if [ ! -d "MacOSX11.3.sdk" ]
-then
-    sudo curl -L 'https://github.com/phracker/MacOSX-SDKs/releases/download/11.3/MacOSX11.3.sdk.tar.xz' | sudo tar -xzf -
+if [ "$build_arm64" = true ] ; then
+    echo "*** Setup 11.3 SDK"
+    cd /Library/Developer/CommandLineTools/SDKs
+    if [ ! -d "MacOSX11.3.sdk" ]
+    then
+        sudo curl -L 'https://github.com/phracker/MacOSX-SDKs/releases/download/11.3/MacOSX11.3.sdk.tar.xz' | sudo tar -xzf -
+    fi
+    echo 'export SDKROOT=/Library/Developer/CommandLineTools/SDKs/MacOSX11.3.sdk' > ~/.profile
+    echo 'export MACOSX_DEPLOYMENT_TARGET=11.0' >> ~/.profile
+    echo 'export GIMP_ARM64=true' >> ~/.profile
+else
+    echo "*** Setup 10.12 SDK"
+    cd /Library/Developer/CommandLineTools/SDKs
+    if [ ! -d "MacOSX10.12.sdk" ]
+    then
+        sudo curl -L 'https://github.com/phracker/MacOSX-SDKs/releases/download/10.15/MacOSX10.12.sdk.tar.xz' | sudo tar -xzf -
+    fi
+    echo 'export SDKROOT=/Library/Developer/CommandLineTools/SDKs/MacOSX10.12.sdk' > ~/.profile
+    echo 'export MACOSX_DEPLOYMENT_TARGET=10.12' >> ~/.profile
 fi
-popd
-export SDKROOT=/Library/Developer/CommandLineTools/SDKs/MacOSX11.3.sdk
+
+echo "*** Setup 11.3 SDK"
+source ~/.profile
 
 sudo port -v selfupdate
 
