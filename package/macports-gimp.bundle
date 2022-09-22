@@ -52,6 +52,7 @@
   <binary dest="${bundle}/Contents/MacOS">${prefix}/bin/gimp-console-2.99</binary>
   <binary dest="${bundle}/Contents/MacOS">${prefix}/bin/gimp-debug-tool-2.99</binary>
   <binary dest="${bundle}/Contents/MacOS">${prefix}/bin/gimptool-2.99</binary>
+  <binary dest="${bundle}/Contents/MacOS">${prefix}/bin/gimp-script-fu-interpreter-3.0</binary>
 
   <!-- Copy in Info.plist -->
   <plist>${project}/info.plist</plist>
@@ -65,43 +66,11 @@
   <binary>
     ${prefix}/lib/gio/modules
   </binary>
-  <!-- <data recurse="True">
-    ${prefix}/lib/python3.10/*.py
-  </data> -->
 
   <!-- These are used to copy in dependencies, in reality the whole dir struct needs to be copied in -->
-  <!-- Folder is too long for otool, so have to break up -->
-  <!-- <binary recurse="True">
-    ${prefix}/Library/Frameworks/Python.framework/Versions/3.10/Headers/*
-  </binary>
   <binary recurse="True">
-    ${prefix}/Library/Frameworks/Python.framework/Versions/3.10/Python/*
+    ${prefix}/Library/Frameworks/Python.framework/Versions/3.10/*
   </binary>
-  <binary recurse="True">
-    ${prefix}/Library/Frameworks/Python.framework/Versions/3.10/Resources/*
-  </binary>
-  <binary recurse="True">
-    ${prefix}/Library/Frameworks/Python.framework/Versions/3.10/bin/*
-  </binary>
-  <binary recurse="True">
-    ${prefix}/Library/Frameworks/Python.framework/Versions/3.10/include/*
-  </binary>
-  <binary recurse="True">
-    ${prefix}/Library/Frameworks/Python.framework/Versions/3.10/lib/libpython*
-  </binary>
-  <binary recurse="True">
-    ${prefix}/Library/Frameworks/Python.framework/Versions/3.10/lib/pkgconfig/*
-  </binary> -->
-  <binary recurse="True">
-    ${prefix}/Library/Frameworks/Python.framework/Versions/3.10/lib/python3.10/*
-  </binary>
-  <!-- <binary recurse="True">
-    ${prefix}/Library/Frameworks/Python.framework/Versions/3.10/share/*
-  </binary>
-  <binary recurse="True">
-    ${prefix}/Library/Frameworks/Python.framework/Versions/3.10/lib/python3.10/site-packages/*.so
-  </binary> -->
-
   <!-- Name of main gimp binary -->
   <main-binary>${prefix}/bin/gimp-2.99</main-binary>
   <!-- Copy in gimp plugins -->
