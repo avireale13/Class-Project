@@ -74,6 +74,7 @@ jobs:
             name: Build GIMP dependencies part 1 (without gegl/babl)
             command: |
               scripts/macports1_install_packages.sh circleci
+            no_output_timeout: 30m
         - save_cache:
             paths:
               - /opt/local

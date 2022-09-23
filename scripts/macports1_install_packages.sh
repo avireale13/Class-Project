@@ -63,3 +63,5 @@ sup_port sudo port -N install gcc12
 sudo sed -i -e 's/buildfromsource never/buildfromsource always/g' /opt/local/etc/macports/macports.conf
 
 sup_port sudo port -N install gegl +vala
+
+sup_port sudo port upgrade outdated
