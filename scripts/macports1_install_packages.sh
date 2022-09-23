@@ -28,12 +28,17 @@ if [ "$1" == "circleci" ]; then
   circleci=true
 fi
 
-function sup_port() {
+function massage_output() {
 	if [ $circleci ]; then
+    # suppress progress bar
     "$@" | cat
   else
     "$@"
   fi
+}
+
+function port_install() {
+  massage_output sudo port -N install "$@"
 }
 
 PROJECT_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )/.." && pwd )"
@@ -42,26 +47,28 @@ export PATH=$PREFIX/bin:$PATH
 
 source ~/.profile
 
-sup_port sudo port -N install python310
-sup_port sudo port select --set python python310
-sup_port sudo port select --set python3 python310
-sup_port sudo port -N install icu
-sup_port sudo port -N install openjpeg ilmbase json-c libde265 nasm x265
-sup_port sudo port -N install util-linux xmlto py-cairo py-gobject3
-sup_port sudo port -N install gtk-osx-application-gtk3
-sup_port sudo port -N install libarchive libyaml
-sup_port sudo port -N install lcms2 glib-networking poppler poppler-data fontconfig libmypaint mypaint-brushes1 libheif \
+port_install python310
+sudo port select --set python python310
+sudo port select --set python3 python310
+port_install icu
+port_install openjpeg ilmbase json-c libde265 nasm x265
+port_install util-linux xmlto py-cairo py-gobject3
+port_install gtk-osx-application-gtk3
+port_install libarchive libyaml
+port_install lcms2 glib-networking poppler poppler-data fontconfig libmypaint mypaint-brushes1 libheif \
   aalib webp shared-mime-info iso-codes librsvg gexiv2 libwmf openexr libmng ghostscript
-sup_port sudo port -N install gjs
-sup_port sudo port -N install adwaita-icon-theme
+# Must be verbose because otherwise times out on circle ci
+sudo port -v install rust
+port_install gjs
+port_install adwaita-icon-theme
 
-sup_port sudo port -N install babl
+port_install babl
 
 echo "gcc12 being installed before gegl"
 sudo sed -i -e 's/buildfromsource always/buildfromsource never/g' /opt/local/etc/macports/macports.conf
-sup_port sudo port -N install gcc12
+port_install gcc12
 sudo sed -i -e 's/buildfromsource never/buildfromsource always/g' /opt/local/etc/macports/macports.conf
 
-sup_port sudo port -N install gegl +vala
+port_install gegl +vala
 
-sup_port sudo port upgrade outdated
+massage_output sudo port upgrade outdated
