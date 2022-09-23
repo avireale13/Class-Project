@@ -58,7 +58,7 @@ port_install libarchive libyaml
 port_install lcms2 glib-networking poppler poppler-data fontconfig libmypaint mypaint-brushes1 libheif \
   aalib webp shared-mime-info iso-codes librsvg gexiv2 libwmf openexr libmng ghostscript
 # Must be verbose because otherwise times out on circle ci
-sudo port -v install -N rust
+sudo port -v -N install rust
 port_install gjs
 port_install adwaita-icon-theme
 
