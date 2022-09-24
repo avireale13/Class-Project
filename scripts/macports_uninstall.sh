@@ -29,7 +29,7 @@ if ! which port &> /dev/null; then
   $dosudo port -fp uninstall installed || true
 fi
 
-if [ -z ${dosudo+x} ]; then
+if [ -z ${dosudo} ]; then
   if [ ! -z ${PREFIX+x} ]; then
     rm -rf $PREFIX
   fi
