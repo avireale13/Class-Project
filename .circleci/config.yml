@@ -15,7 +15,7 @@ commands:
         - run:
             name: Install macports
             command: |
-              scripts/macports0_install.sh home-dir
+              scripts/macports0_install.sh
         # - run:
         #     name: Gimp version (default `master`)
         #     command: |
@@ -41,6 +41,10 @@ commands:
 
   get-cached-data:
     steps:
+        - run:
+            command: |
+              # get around permissions problems restoring
+              sudo chown -R "$USER":staff /opt/local
         - restore_cache:
             keys:
               - v{{ checksum "CACHE_BREAK" }}-gimpv3-{{ checksum "CACHE_ITER" }}
@@ -49,6 +53,9 @@ commands:
               - v{{ checksum "CACHE_BREAK" }}-gimpv3-
               - v{{ checksum "CACHE_BREAK" }}-gimp-depspt2v3-
               - v{{ checksum "CACHE_BREAK" }}-gimp-depspt1v3-
+        - run:
+            command: |
+              sudo chown -R root:wheel /opt/local
 
 # -------------------------
 #        JOBS
