@@ -24,5 +24,36 @@
 
 set -e;
 
-macports1a_install_packages.sh
-macports1b_install_packages.sh
+if [ "$1" == "circleci" ]; then
+  circleci=true
+fi
+
+function massage_output() {
+	if [ $circleci ]; then
+    # suppress progress bar
+    "$@" | cat
+  else
+    "$@"
+  fi
+}
+
+function port_install() {
+  massage_output sudo port -N install "$@"
+}
+
+PROJECT_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )/.." && pwd )"
+PREFIX=/opt/local
+export PATH=$PREFIX/bin:$PATH
+
+source ~/.profile
+
+port_install python310
+sudo port select --set python python310
+sudo port select --set python3 python310
+port_install icu
+port_install openjpeg ilmbase json-c libde265 nasm x265
+port_install util-linux xmlto py-cairo py-gobject3
+port_install gtk-osx-application-gtk3
+port_install libarchive libyaml
+port_install lcms2 glib-networking poppler poppler-data fontconfig libmypaint mypaint-brushes1 libheif \
+  aalib webp shared-mime-info iso-codes librsvg gexiv2 libwmf openexr libmng ghostscript

@@ -44,8 +44,10 @@ commands:
         - restore_cache:
             keys:
               - v{{ checksum "CACHE_BREAK" }}-gimpv3-{{ checksum "CACHE_ITER" }}
+              - v{{ checksum "CACHE_BREAK" }}-gimp-depspt2v3-{{ checksum "CACHE_ITER" }}
               - v{{ checksum "CACHE_BREAK" }}-gimp-depspt1v3-{{ checksum "CACHE_ITER" }}
               - v{{ checksum "CACHE_BREAK" }}-gimpv3-
+              - v{{ checksum "CACHE_BREAK" }}-gimp-depspt2v3-
               - v{{ checksum "CACHE_BREAK" }}-gimp-depspt1v3-
 
 # -------------------------
@@ -73,13 +75,30 @@ jobs:
         - run:
             name: Build GIMP dependencies part 1 (without gegl/babl)
             command: |
-              scripts/macports1_install_packages.sh circleci
+              scripts/macports1a_install_packages.sh circleci
             no_output_timeout: 30m
         - save_cache:
             paths:
               - /opt/local
             key: v{{ checksum "CACHE_BREAK" }}-gimp-depspt1v3-{{ checksum "CACHE_ITER" }}
 
+  dependencies-part2:
+    macos:
+        xcode: "13.3.0"
+        resource_class: macos.x86.medium.gen2
+
+    steps:
+        - setup
+        - get-cached-data
+        - run:
+            name: Build GIMP dependencies part 1 (without gegl/babl)
+            command: |
+              scripts/macports1b_install_packages.sh circleci
+            no_output_timeout: 30m
+        - save_cache:
+            paths:
+              - /opt/local
+            key: v{{ checksum "CACHE_BREAK" }}-gimp-depspt2v3-{{ checksum "CACHE_ITER" }}
 
   build-gimp-and-package:
     macos:
@@ -143,6 +162,9 @@ workflows:
   build-different-versions:
     jobs:
       - dependencies-part1
-      - build-gimp-and-package:
+      - dependencies-part2:
           requires:
             - dependencies-part1
+      - build-gimp-and-package:
+          requires:
+            - dependencies-part2

@@ -24,5 +24,41 @@
 
 set -e;
 
-macports1a_install_packages.sh
-macports1b_install_packages.sh
+if [ "$1" == "circleci" ]; then
+  circleci=true
+fi
+
+function massage_output() {
+	if [ $circleci ]; then
+    # suppress progress bar
+    "$@" | cat
+  else
+    "$@"
+  fi
+}
+
+function port_install() {
+  massage_output sudo port -N install "$@"
+}
+
+PROJECT_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )/.." && pwd )"
+PREFIX=/opt/local
+export PATH=$PREFIX/bin:$PATH
+
+source ~/.profile
+
+# Must be verbose because otherwise times out on circle ci
+sudo port -v -N install rust
+port_install gjs
+port_install adwaita-icon-theme
+
+port_install babl
+
+echo "gcc12 being installed before gegl"
+sudo sed -i -e 's/buildfromsource always/buildfromsource never/g' /opt/local/etc/macports/macports.conf
+port_install gcc12
+sudo sed -i -e 's/buildfromsource never/buildfromsource always/g' /opt/local/etc/macports/macports.conf
+
+port_install gegl +vala
+
+massage_output sudo port upgrade outdated
