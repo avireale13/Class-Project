@@ -48,16 +48,15 @@ export PATH=$PREFIX/bin:$PATH
 
 # Must be verbose because otherwise times out on circle ci
 $dosudo port -v -N install rust
-port_install gjs
-port_install adwaita-icon-theme
-
-port_install babl
-
-echo "gcc12 being installed before gegl"
+$dosudo port -v -N install llvm-15
+echo "gcc12 being installed before gegl and gjs (via mozjs91)"
 $dosudo sed -i -e 's/buildfromsource always/buildfromsource never/g' /opt/local/etc/macports/macports.conf
 port_install gcc12
 $dosudo sed -i -e 's/buildfromsource never/buildfromsource always/g' /opt/local/etc/macports/macports.conf
 
+port_install gjs
+port_install adwaita-icon-theme
+port_install babl
 port_install gegl +vala
 
 massage_output $dosudo port upgrade outdated
