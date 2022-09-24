@@ -22,21 +22,30 @@
  # Boston, MA  02110-1301,  USA       gnu@gnu.org                   #
  ####################################################################
 
-if [ command -v port &> /dev/null ]; then
-  sudo port -fp uninstall installed || true
+source ~/.profile
+export PATH=$PREFIX/bin:$PATH
+
+if ! which port &> /dev/null; then
+  $dosudo port -fp uninstall installed || true
 fi
 
-sudo dscl . -delete /Users/macports
-sudo dscl . -delete /Groups/macports
+if [ -z ${dosudo+x} ]; then
+  if [ ! -z ${PREFIX+x} ]; then
+    rm -rf $PREFIX
+  fi
+else
+  $dosudo dscl . -delete /Users/macports
+  $dosudo dscl . -delete /Groups/macports
 
-sudo rm -rf \
-    /opt/local \
-    /Applications/DarwinPorts \
-    /Applications/MacPorts \
-    /Library/LaunchDaemons/org.macports.* \
-    /Library/Receipts/DarwinPorts*.pkg \
-    /Library/Receipts/MacPorts*.pkg \
-    /Library/StartupItems/DarwinPortsStartup \
-    /Library/Tcl/darwinports1.0 \
-    /Library/Tcl/macports1.0 \
-    ~/.macports
+  $dosudo rm -rf \
+      /opt/local \
+      /Applications/DarwinPorts \
+      /Applications/MacPorts \
+      /Library/LaunchDaemons/org.macports.* \
+      /Library/Receipts/DarwinPorts*.pkg \
+      /Library/Receipts/MacPorts*.pkg \
+      /Library/StartupItems/DarwinPortsStartup \
+      /Library/Tcl/darwinports1.0 \
+      /Library/Tcl/macports1.0 \
+      ~/.macports
+fi

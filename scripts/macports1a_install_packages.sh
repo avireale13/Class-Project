@@ -38,18 +38,17 @@ function massage_output() {
 }
 
 function port_install() {
-  massage_output sudo port -N install "$@"
+  massage_output $dosudo port -N install "$@"
 }
 
 PROJECT_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )/.." && pwd )"
-PREFIX=/opt/local
-export PATH=$PREFIX/bin:$PATH
 
 source ~/.profile
+export PATH=$PREFIX/bin:$PATH
 
 port_install python310
-sudo port select --set python python310
-sudo port select --set python3 python310
+$dosudo port select --set python python310
+$dosudo port select --set python3 python310
 port_install icu
 port_install openjpeg ilmbase json-c libde265 nasm x265
 port_install util-linux xmlto py-cairo py-gobject3

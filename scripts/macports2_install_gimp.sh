@@ -37,13 +37,12 @@ function sup_port() {
 }
 
 PROJECT_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )/.." && pwd )"
-PREFIX=/opt/local
-export PATH=$PREFIX/bin:$PATH
 
 source ~/.profile
+export PATH=$PREFIX/bin:$PATH
 
 pushd ~/project/ports
 portindex
 popd
 
-sup_port sudo port -k -N install gimp3 +debug
+sup_port $dosudo port -k -N install gimp3 +debug

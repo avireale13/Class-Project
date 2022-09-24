@@ -29,11 +29,9 @@ source ~/.profile
 if [[ $(uname -m) == 'arm64' ]]; then
   build_arm64=true
   echo "*** Build: arm64"
-  PREFIX=/opt/local
 else
   build_arm64=false
   echo "*** Build: x86_64"
-  PREFIX=/opt/local
 fi
 
 export PATH=$PREFIX/bin:$PATH

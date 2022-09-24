@@ -24,5 +24,7 @@
 
 set -e;
 
-macports1a_install_packages.sh
-macports1b_install_packages.sh
+PROJECT_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )/.." && pwd )"
+
+${PROJECT_DIR}/scripts/macports1a_install_packages.sh
+${PROJECT_DIR}/scripts/macports1b_install_packages.sh
