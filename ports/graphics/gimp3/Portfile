@@ -132,7 +132,7 @@ variant debug description {Build with debug symbols} {
 # Adding --build=whatever doesn't work with meson. How do we do this?
 #platform darwin {
 #    if {[variant_isset universal]} {
-#        # In order to build universal on Leopard, you need MacPorts 2.1
+#        # In order to build universal on Leopard, you need MacPorts 2.1 at least
 #        set merger_configure_args(x86_64) --build=${build_arch}-apple-${os.platform}${os.version}
 #        set merger_configure_cflags(ppc) -fno-altivec
 #        set merger_configure_cxxflags(ppc) -fno-altivec

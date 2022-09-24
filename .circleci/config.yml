@@ -15,7 +15,7 @@ commands:
         - run:
             name: Install macports
             command: |
-              scripts/macports0_install.sh
+              scripts/macports0_install.sh home-dir
         # - run:
         #     name: Gimp version (default `master`)
         #     command: |
