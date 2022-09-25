@@ -50,9 +50,11 @@ function usage() {
     echo "  --part2"
     echo "      second part."
     echo "  --part3"
+    echo "      third part."
     echo "  --part4"
+    echo "      currently a no op"
     echo "  --part5"
-    echo "      more parts."
+    echo "      currently a no op"
     echo "  --version         show tool version number"
     echo "  -h, --help        display this help"
     exit 0
@@ -137,25 +139,19 @@ if [ ! -z "${PART1}" ]; then
   port_install util-linux xmlto py-cairo py-gobject3
   port_install gtk-osx-application-gtk3
   port_install libarchive libyaml
-  port_install lcms2 glib-networking poppler poppler-data fontconfig libmypaint mypaint-brushes1 libheif \
+  port_install lcms2 glib-networking poppler -boost poppler-data fontconfig libmypaint mypaint-brushes1 libheif \
     aalib webp shared-mime-info iso-codes librsvg gexiv2 libwmf openexr libmng ghostscript
 fi
 
 if [ ! -z "${PART2}" ]; then
   # Must be verbose because otherwise times out on circle ci
   $dosudo port -v -N install rust
+  $dosudo port -v -N install llvm-15
 fi
 
 if [ ! -z "${PART3}" ]; then
-  $dosudo port -v -N install llvm-15
-
-fi
-
-if [ ! -z "${PART4}" ]; then
   $dosudo port -v -N install clang-15
-fi
 
-if [ ! -z "${PART5}" ]; then
   echo "gcc12 being installed before gegl and gjs (via mozjs91)"
   $dosudo sed -i -e 's/buildfromsource always/buildfromsource never/g' /opt/local/etc/macports/macports.conf
   port_install gcc12
@@ -165,6 +161,18 @@ if [ ! -z "${PART5}" ]; then
   port_install adwaita-icon-theme
   port_install babl
   port_install gegl +vala
+  # 10.12 requires git to be installed, and perl doesn't build
+  if [ $circleci ]; then
+    port_install git -perl5_34
+  fi
 
   $dosudo port -v -N upgrade outdated
+fi
+
+if [ ! -z "${PART4}" ]; then
+  echo "**** No op"
+fi
+
+if [ ! -z "${PART5}" ]; then
+  echo "**** No op"
 fi

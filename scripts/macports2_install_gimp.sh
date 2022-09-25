@@ -45,4 +45,5 @@ pushd ~/project/ports
 portindex
 popd
 
+$dosudo port clean gimp3
 sup_port $dosudo port -k -N install gimp3 +debug

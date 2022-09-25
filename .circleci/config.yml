@@ -34,7 +34,7 @@ commands:
         - run:
             name: checksums for caching
             command: |
-              echo $(find ./ports -type f -exec md5 {} \; | md5 | cut -d' ' -f1)  >> CACHE_BREAK
+              echo $(find ./ports/cache_break -type f -exec md5 {} \; | md5 | cut -d' ' -f1)  >> CACHE_BREAK
               echo $(find ./scripts -type f -exec md5 {} \; | md5 | cut -d' ' -f1)  >> CACHE_ITER
               cat CACHE_BREAK
               cat CACHE_ITER
@@ -242,12 +242,12 @@ workflows:
       - dependencies-part3:
           requires:
             - dependencies-part2
-      - dependencies-part4:
-          requires:
-            - dependencies-part3
-      - dependencies-part5:
-          requires:
-            - dependencies-part4
+      # - dependencies-part4:
+      #     requires:
+      #       - dependencies-part3
+      # - dependencies-part5:
+      #     requires:
+      #       - dependencies-part4
       - build-gimp-and-package:
           requires:
-            - dependencies-part5
+            - dependencies-part3
