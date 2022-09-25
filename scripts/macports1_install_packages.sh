@@ -24,7 +24,147 @@
 
 set -e;
 
+function pure_version() {
+	echo '0.1'
+}
+
+function version() {
+	echo "macports_install_packages.sh $(pure_version)"
+}
+
+function usage() {
+    version
+    echo ""
+    echo "Builds Gimp 3 dependencies."
+    echo "Usage:  $(basename $0) [options]"
+    echo ""
+    echo "Builds Gimp dependencies."
+    echo "By default builds dependencies, end to end."
+    echo "For CI builds, can be split into steps to reduce run time for each"
+    echo "step."
+    echo "Options:"
+    echo "  --circleci"
+    echo "      settings for circleci instead of local"
+    echo "  --part1"
+    echo "      first part. Each part takes up to 3 hours on circleci"
+    echo "  --part2"
+    echo "      second part."
+    echo "  --part3"
+    echo "  --part4"
+    echo "  --part5"
+    echo "      more parts."
+    echo "  --version         show tool version number"
+    echo "  -h, --help        display this help"
+    exit 0
+}
+
+circleci=''
+PART1="true"
+PART2="true"
+PART3="true"
+PART4="true"
+PART5="true"
+
+while test "${1:0:1}" = "-"; do
+	case $1 in
+	--circleci)
+		circleci="true"
+		shift;;
+	--part1)
+		PART2=''
+		PART3=''
+		PART4=''
+		PART5=''
+		shift;;
+	--part2)
+		PART1=''
+		PART3=''
+		PART4=''
+		PART5=''
+		shift;;
+	--part3)
+		PART1=''
+		PART2=''
+		PART4=''
+		PART5=''
+		shift;;
+	--part4)
+		PART1=''
+		PART2=''
+		PART3=''
+		PART5=''
+		shift;;
+	--part5)
+		PART1=''
+		PART2=''
+		PART3=''
+		PART4=''
+		shift;;
+	-h | --help)
+		usage;;
+	--version)
+		version; exit 0;;
+	-*)
+		echo "Unknown option $1. Run with --help for help."
+		exit 1;;
+	esac
+done
+
+function massage_output() {
+	if [ $circleci ]; then
+    # suppress progress bar
+    "$@" | cat
+  else
+    "$@"
+  fi
+}
+
+function port_install() {
+  massage_output $dosudo port -N install "$@"
+}
+
 PROJECT_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )/.." && pwd )"
 
-${PROJECT_DIR}/scripts/macports1a_install_packages.sh
-${PROJECT_DIR}/scripts/macports1b_install_packages.sh
+source ~/.profile
+export PATH=$PREFIX/bin:$PATH
+
+if [ ! -z "${PART1}" ]; then
+  port_install python310
+  $dosudo port select --set python python310
+  $dosudo port select --set python3 python310
+  port_install icu
+  port_install openjpeg ilmbase json-c libde265 nasm x265
+  port_install util-linux xmlto py-cairo py-gobject3
+  port_install gtk-osx-application-gtk3
+  port_install libarchive libyaml
+  port_install lcms2 glib-networking poppler poppler-data fontconfig libmypaint mypaint-brushes1 libheif \
+    aalib webp shared-mime-info iso-codes librsvg gexiv2 libwmf openexr libmng ghostscript
+fi
+
+if [ ! -z "${PART2}" ]; then
+  # Must be verbose because otherwise times out on circle ci
+  $dosudo port -v -N install rust
+fi
+
+if [ ! -z "${PART3}" ]; then
+  $dosudo port -v -N install llvm-15
+
+fi
+
+if [ ! -z "${PART4}" ]; then
+  $dosudo port -v -N install clang-15
+fi
+
+if [ ! -z "${PART5}" ]; then
+  echo "gcc12 being installed before gegl and gjs (via mozjs91)"
+  $dosudo sed -i -e 's/buildfromsource always/buildfromsource never/g' /opt/local/etc/macports/macports.conf
+  port_install gcc12
+  $dosudo sed -i -e 's/buildfromsource never/buildfromsource always/g' /opt/local/etc/macports/macports.conf
+
+  port_install gjs
+  port_install adwaita-icon-theme
+  port_install babl
+  port_install gegl +vala
+
+  $dosudo port -v -N upgrade outdated
+fi
