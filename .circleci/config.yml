@@ -194,6 +194,7 @@ jobs:
         - run:
             name: Setup gtk-mac-bundler
             command: |
+              mkdir -p ~/Source
               cd ~/Source
               git clone https://gitlab.gnome.org/lukaso/gtk-mac-bundler
               cd gtk-mac-bundler
