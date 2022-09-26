@@ -159,10 +159,13 @@ if [ ! -z "${PART3}" ]; then
   $dosudo sed -i -e 's/buildfromsource never/buildfromsource always/g' /opt/local/etc/macports/macports.conf
 
   port_install gjs
+  # one time
+  $dosudo port clean adwaita-icon-them babl gegl glib-networking p5.34-io-compress-brotli
   port_install adwaita-icon-theme
   port_install babl
   port_install gegl +vala
   # 10.12 requires git to be installed, and perl doesn't build
+  port_install p5.34-io-compress-brotli build.jobs=1
   if [ $circleci ]; then
     port_install git -perl5_34
   fi
