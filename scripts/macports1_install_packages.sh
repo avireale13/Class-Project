@@ -140,6 +140,8 @@ if [ ! -z "${PART1}" ]; then
   port_install util-linux xmlto py-cairo py-gobject3
   port_install gtk-osx-application-gtk3
   port_install libarchive libyaml
+  # one off?
+  $dosudo port clean glib-networking
   port_install lcms2 glib-networking poppler -boost poppler-data fontconfig libmypaint mypaint-brushes1 libheif \
     aalib webp shared-mime-info iso-codes librsvg gexiv2 libwmf openexr libmng ghostscript
 fi
@@ -160,7 +162,7 @@ if [ ! -z "${PART3}" ]; then
 
   port_install gjs
   # one time
-  $dosudo port clean adwaita-icon-them babl gegl glib-networking p5.34-io-compress-brotli
+  $dosudo port clean adwaita-icon-theme babl gegl p5.34-io-compress-brotli
   port_install adwaita-icon-theme
   port_install babl
   port_install gegl +vala
