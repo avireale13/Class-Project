@@ -31,6 +31,7 @@ fi
 function sup_port() {
 	if [ $circleci ]; then
     "$@" | cat
+    if [ "${PIPESTATUS[0]}" -ne 0 ]; then exit "${PIPESTATUS[0]}"; fi
   else
     "$@"
   fi

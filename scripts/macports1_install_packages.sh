@@ -116,6 +116,7 @@ function massage_output() {
 	if [ $circleci ]; then
     # suppress progress bar
     "$@" | cat
+    if [ "${PIPESTATUS[0]}" -ne 0 ]; then exit "${PIPESTATUS[0]}"; fi
   else
     "$@"
   fi
