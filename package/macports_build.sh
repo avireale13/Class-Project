@@ -37,15 +37,11 @@ echo "Done creating bundle"
 
 BASEDIR=$(dirname "$0")
 
-echo "Copy python files"
-rm -rf "${PACKAGE_DIR}/GIMP.app/Contents/Resources/Frameworks/"
-cp -r "${PREFIX}/Library/Frameworks" "${PACKAGE_DIR}/GIMP.app/Contents/Resources/Library"
-
 echo "Link 'Resources' into python framework 'Resources'"
 for resources in etc gimp.icns lib opt share xcf.icns ;
 do
 ln -s "${PACKAGE_DIR}/GIMP.app/Contents/Resources/${resources}" \
-      "${PACKAGE_DIR}/GIMP.app/Contents/Resources/Library/Frameworks/Python.framework/Versions/3.9/Resources/Python.app/Contents/Resources/" \
+      "${PACKAGE_DIR}/GIMP.app/Contents/Resources/Library/Frameworks/Python.framework/Versions/3.10/Resources/Python.app/Contents/Resources/" \
       || true
 done
 
@@ -61,7 +57,6 @@ FILES=$(
 
 OLDPATH="${PREFIX}/"
 
-# Cellar/babl+something@3.9/0.1.92_5p/
 CELLAR_SUFFIX="Cellar/([^/]+)/[^/]+/"
 CELLAR="${OLDPATH}${CELLAR_SUFFIX}"
 FRAMEWORKS="${OLDPATH}Cellar/.*/Frameworks/"
@@ -71,22 +66,11 @@ do
   id_path=$(echo "$file" | sed -E "s|${PACKAGE_DIR}/GIMP.app/Contents/(Resources\|MacOS)/||")
   install_name_tool -id "@rpath/"$id_path $file
   otool -L $file \
-   | grep -E "\t$FRAMEWORKS" \
-   | gawk -v fname="$file" -v frameworks="${FRAMEWORKS}" \
-     '{print "install_name_tool -change "$1" @rpath/Frameworks/"gensub(frameworks, "\\1", "1", $1)" "fname}' \
-   | bash
-  otool -L $file \
    | grep "\t$OLDPATH" \
    | sed "s|${OLDPATH}||" \
    | awk -v fname="$file" -v old_path="$OLDPATH" '{print "install_name_tool -change "old_path $1" @rpath/"$1" "fname}' \
    | bash
 done
-
-echo "remove @rpath from the libraries"
-find  ${PACKAGE_DIR}/GIMP.app/Contents/Resources -mindepth 1 -perm +111 -type f \
-   | xargs file \
-   | grep ' Mach-O '|awk -F ':' '{print $1}' \
-   | xargs -n1 install_name_tool -delete_rpath ${PREFIX}
 
 echo "adding @rpath to the binaries (incl special ghostscript 9.56 fix)"
 find  ${PACKAGE_DIR}/GIMP.app/Contents/MacOS -type f -perm +111 \
