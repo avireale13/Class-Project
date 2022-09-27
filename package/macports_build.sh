@@ -178,7 +178,25 @@ then
      | xargs /usr/bin/codesign -s "${codesign_subject}" \
          --options runtime \
          --entitlements ${HOME}/project/package/gimp-hardening.entitlements
-  find  ${PACKAGE_DIR}/GIMP.app/Contents/Resources/Library/ -type f -perm +111 \
+  find  ${PACKAGE_DIR}/GIMP.app/Contents/Resources/Library/Frameworks/Python.framework/Versions/3.10/lib -type f -perm +111 \
+     | xargs file \
+     | grep ' Mach-O '|awk -F ':' '{print $1}' \
+     | xargs /usr/bin/codesign -s "${codesign_subject}" \
+         --options runtime \
+         --entitlements ${HOME}/project/package/gimp-hardening.entitlements
+  find  ${PACKAGE_DIR}/GIMP.app/Contents/Resources/Library/Frameworks/Python.framework/Versions/3.10/Resources -type f -perm +111 \
+     | xargs file \
+     | grep ' Mach-O '|awk -F ':' '{print $1}' \
+     | xargs /usr/bin/codesign -s "${codesign_subject}" \
+         --options runtime \
+         --entitlements ${HOME}/project/package/gimp-hardening.entitlements
+  find  ${PACKAGE_DIR}/GIMP.app/Contents/Resources/Library/Frameworks/Python.framework/Versions/3.10/bin -type f -perm +111 \
+     | xargs file \
+     | grep ' Mach-O '|awk -F ':' '{print $1}' \
+     | xargs /usr/bin/codesign -s "${codesign_subject}" \
+         --options runtime \
+         --entitlements ${HOME}/project/package/gimp-hardening.entitlements
+  find  ${PACKAGE_DIR}/GIMP.app/Contents/Resources/Library/Frameworks/Python.framework/Versions/3.10/Python -type f -perm +111 \
      | xargs file \
      | grep ' Mach-O '|awk -F ':' '{print $1}' \
      | xargs /usr/bin/codesign -s "${codesign_subject}" \
