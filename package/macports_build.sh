@@ -88,9 +88,9 @@ find  ${PACKAGE_DIR}/GIMP.app/Contents/Resources/lib/gimp/2.99/extensions/ -perm
    | xargs -n1 install_name_tool -add_rpath @executable_path/../../../../../ -change libgs.dylib.9.56 @rpath/libgs.dylib.9.56
 
 echo "adding @rpath to python app"
-install_name_tool -add_rpath @executable_path/../../../../../../../../../ \
+install_name_tool -add_rpath @loader_path/../../../../../../../../../ \
   ${PACKAGE_DIR}/GIMP.app/Contents/Resources/Library/Frameworks/Python.framework/Versions/3.10/Resources/Python.app/Contents/MacOS/Python
-install_name_tool -add_rpath @executable_path/../../../../../ \
+install_name_tool -add_rpath @loader_path/../../../../../ \
   ${PACKAGE_DIR}/GIMP.app/Contents/Resources/Library/Frameworks/Python.framework/Versions/3.10/Python
 
 echo "removing build path from the .gir files"
