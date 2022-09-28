@@ -38,12 +38,13 @@ echo "Done creating bundle"
 BASEDIR=$(dirname "$0")
 
 echo "Link 'Resources' into python framework 'Resources'"
-for resources in etc gimp.icns lib opt share xcf.icns ;
-do
-ln -s "${PACKAGE_DIR}/GIMP.app/Contents/Resources/${resources}" \
-      "${PACKAGE_DIR}/GIMP.app/Contents/Resources/Library/Frameworks/Python.framework/Versions/3.10/Resources/Python.app/Contents/Resources/" \
-      || true
-done
+pushd "${PACKAGE_DIR}/GIMP.app/Contents/Resources/Library/Frameworks/Python.framework/Versions/3.10/Resources/Python.app/Contents/Resources/"
+  for resources in etc gimp.icns lib opt share xcf.icns ;
+  do
+ln -s "../../../../../../../../../${resources}" \
+      "${resources}"
+  done
+popd
 
 echo "Removing pathnames from the libraries and binaries"
 # fix permission for some libs
@@ -138,10 +139,10 @@ fi
 echo "create missing links. should we use wrappers instead?"
 
 pushd ${PACKAGE_DIR}/GIMP.app/Contents/MacOS
- ln -s gimp-console-2.99 gimp-console
- ln -s gimp-debug-tool-2.99 gimp-debug-tool
- ln -s python3.10 python
- ln -s python3.10 python3
+  ln -s gimp-console-2.99 gimp-console
+  ln -s gimp-debug-tool-2.99 gimp-debug-tool
+  ln -s python3.10 python
+  ln -s python3.10 python3
 popd
 
 echo "copy xdg-email wrapper to the package"
