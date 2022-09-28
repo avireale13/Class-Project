@@ -58,10 +58,6 @@ FILES=$(
 
 OLDPATH="${PREFIX}/"
 
-CELLAR_SUFFIX="Cellar/([^/]+)/[^/]+/"
-CELLAR="${OLDPATH}${CELLAR_SUFFIX}"
-FRAMEWORKS="${OLDPATH}Cellar/.*/Frameworks/"
-
 for file in $FILES
 do
   id_path=$(echo "$file" | sed -E "s|${PACKAGE_DIR}/GIMP.app/Contents/(Resources\|MacOS)/||")
