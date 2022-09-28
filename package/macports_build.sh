@@ -39,7 +39,7 @@ BASEDIR=$(dirname "$0")
 
 echo "Link 'Resources' into python framework 'Resources'"
 pushd "${PACKAGE_DIR}/GIMP.app/Contents/Resources/Library/Frameworks/Python.framework/Versions/3.10/Resources/Python.app/Contents/Resources/"
-  for resources in etc gimp.icns lib opt share xcf.icns ;
+  for resources in etc gimp.icns lib share xcf.icns ;
   do
 ln -s "../../../../../../../../../${resources}" \
       "${resources}"
